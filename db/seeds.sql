@@ -38,5 +38,10 @@ VALUES
 ("Help Desk", 36000, 8);
 
 
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES
+('James', 'Fraser', 1, NULL),
+('Jack', 'London', 3, 1);
+
 
 
