@@ -26,6 +26,24 @@ class Employees {
             .catch(console.log)
             .then(() => con.end());
     }
+
+    addEmployee(first_name, last_name, role_id, manager_id) {
+        this.first_name = first_name
+        this.last_name = last_name
+        this.role_id = role_id
+        this.manager_id = manager_id
+        const con = mysql.createConnection(
+            { host: 'localhost', user: 'root', password: password, database: 'employees' }
+        );
+        con.promise().query(`
+                INSERT INTO employee (first_name, last_name, role_id, manager_id)
+                Values
+                ('${this.first_name}', '${this.last_name}', ${this.role_id}, ${this.manager_id});
+                `)
+            .catch(console.log)
+            .then(() => con.end());
+        
+    }
 }
 
 

@@ -26,38 +26,18 @@ class Departments {
             .then(() => con.end());
     }
 
-    addDepartment() {
-        inquirer
-            .prompt([
-                {
-                    type: 'text',
-                    name: 'name',
-                    message: "What is the department name?",
-
-                },
-
-            ])
-            // destructure the prompt object
-            .then(({ name }) => {
-                this.name = name
-                const con = mysql.createConnection(
-                    { host: 'localhost', user: 'root', password: password, database: 'employees' }
-                );
-                con.promise().query(`
+    addDepartment(data) {
+        this.data = data
+        const con = mysql.createConnection(
+            { host: 'localhost', user: 'root', password: password, database: 'employees' }
+        );
+        con.promise().query(`
                 INSERT INTO departments (department_name)
                 Values
-                ('${this.name}');`)
-                    .then(() => {
-                        const displayPrompt = require('./QuestionPrompt')
-                        console.log(`${this.name} was successfully added to the database!`);
-                        new UI().displaySingBreak();
-                        displayPrompt();
-                    })
-
-                    .catch(console.log)
-                    .then(() => con.end());
-
-            });
+                ('${this.data}');`)
+            .catch(console.log)
+            .then(() => con.end());
+        
     }
 }
 

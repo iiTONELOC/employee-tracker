@@ -22,6 +22,23 @@ class Role {
             .catch(console.log)
             .then(() => con.end());
     }
+
+    addRole(title, salary, department) {
+        this.title = title
+        this.salary = salary
+        this.department = department
+        const con = mysql.createConnection(
+            { host: 'localhost', user: 'root', password: password, database: 'employees' }
+        );
+        con.promise().query(`
+                INSERT INTO role (title, salary, department_id)
+                Values
+                ('${this.title}', ${this.salary}, ${this.department});
+                `)
+            .catch(console.log)
+            .then(() => con.end());
+        
+    }
 }
 
 

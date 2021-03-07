@@ -10,7 +10,7 @@ CREATE TABLE departments (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
     department_name VARCHAR(30) NOT NULL
     
-)ENGINE=INNODB;
+);
 
 CREATE TABLE role (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
@@ -21,7 +21,7 @@ CREATE TABLE role (
     FOREIGN KEY(department_id)
         REFERENCES departments(id)
             ON DELETE CASCADE
-)ENGINE=INNODB;
+);
 
 CREATE TABLE employee (
     id INTEGER AUTO_INCREMENT PRIMARY KEY,
@@ -31,5 +31,5 @@ CREATE TABLE employee (
     manager_id INT,
     CONSTRAINT fk_manager FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL,
     CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role(id) ON UPDATE CASCADE ON DELETE CASCADE
-)ENGINE=INNODB;
+);
 
