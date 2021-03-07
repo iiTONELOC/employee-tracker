@@ -15,7 +15,7 @@ const viewEmployees = () => {
     inner join departments on role.department_id = departments.id
     left join employee as e on employee.manager_id = e.id;`)
         .then(([rows, fields]) => {
-            new UI().displayDblBreak()
+            new UI().displaySingBreak()
             console.table(rows);
             new UI().displayDblBreak()            
         })

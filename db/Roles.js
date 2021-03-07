@@ -11,7 +11,7 @@ const viewRole = () => {
     );
     con.promise().query("SELECT * FROM role;")
         .then(([rows, fields]) => {
-            new UI().displayDblBreak()
+            new UI().displaySingBreak()
             console.table(rows);
             new UI().displayDblBreak()
         })

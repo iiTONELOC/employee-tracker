@@ -4,6 +4,7 @@ const password = require('../password');
 const cTable = require('console.table');
 const UI = require('../ulits/UI');
 
+
 class Departments  {
     constructor() {
         this.data = []
@@ -15,7 +16,7 @@ class Departments  {
         );
         con.promise().query("SELECT * FROM departments;")
             .then(([rows, fields]) => {
-                new UI().displayDblBreak();
+                new UI().displaySingBreak();
                 console.table(rows);
                 new UI().displayDblBreak();
             })
