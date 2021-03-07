@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const Departments = require('./Departments');
-const viewRole = require('./Roles');
-const viewEmployees = require('./Employees');
+const Role = require('./Roles');
+const Employees = require('./Employees');
 
 async function displayPrompt() {
     const answers = await inquirer.prompt([
@@ -28,13 +28,11 @@ async function displayPrompt() {
 
     }
     if (answers.action === 'View All Roles') {
-        viewRole();
-
+        new Role().viewRole();
         displayPrompt()
     }
     if (answers.action === 'View All Employees') {
-        viewEmployees();
-
+        new Employees().viewEmployees();
         displayPrompt()
     }
     if (answers.action === 'Add a Department') {
