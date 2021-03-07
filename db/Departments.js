@@ -3,9 +3,11 @@ const mysql = require('mysql2');
 const password = require('../password');
 const cTable = require('console.table');
 const UI = require('../ulits/UI');
+const inquirer = require('inquirer');
 
 
-class Departments  {
+
+class Departments {
     constructor() {
         this.data = []
     }
@@ -22,6 +24,40 @@ class Departments  {
             })
             .catch(console.log)
             .then(() => con.end());
+    }
+
+    addDepartment() {
+        inquirer
+            .prompt([
+                {
+                    type: 'text',
+                    name: 'name',
+                    message: "What is the department name?",
+
+                },
+
+            ])
+            // destructure the prompt object
+            .then(({ name }) => {
+                this.name = name
+                const con = mysql.createConnection(
+                    { host: 'localhost', user: 'root', password: password, database: 'employees' }
+                );
+                con.promise().query(`
+                INSERT INTO departments (department_name)
+                Values
+                ('${this.name}');`)
+                    .then(() => {
+                        const displayPrompt = require('./QuestionPrompt')
+                        console.log(`${this.name} was successfully added to the database!`);
+                        new UI().displaySingBreak();
+                        displayPrompt();
+                    })
+
+                    .catch(console.log)
+                    .then(() => con.end());
+
+            });
     }
 }
 

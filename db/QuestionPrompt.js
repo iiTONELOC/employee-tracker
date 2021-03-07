@@ -3,8 +3,9 @@ const Departments = require('./Departments');
 const Role = require('./Roles');
 const Employees = require('./Employees');
 
-async function displayPrompt() {
-    const answers = await inquirer.prompt([
+function displayPrompt() {
+    inquirer
+    .prompt([
         {
             type: 'list',
             name: 'action',
@@ -21,40 +22,43 @@ async function displayPrompt() {
             ]
 
         }
-    ])
-    if (answers.action === 'View All Departments') {
-        new Departments().viewDepartments();
-        displayPrompt();
+    ]).then(({ action }) => {
+        this.action = action 
+        if (this.action === 'View All Departments') {
+            new Departments().viewDepartments();
+            displayPrompt();
+    
+        }
+        if (this.action === 'View All Roles') {
+            new Role().viewRole();
+            displayPrompt()
+        }
+        if (this.action === 'View All Employees') {
+            new Employees().viewEmployees();
+            displayPrompt()
+        }
+        if (this.action === 'Add a Department') {
+            new Departments().addDepartment()
+            displayPrompt()
+        }
+        if (this.action === 'Add a Role') {
+            console.log("You selected to Add a Role!");
+            displayPrompt()
+        }
+        if (this.action === 'Add an Employee') {
+            console.log("You selected to Add an Employee!");
+            displayPrompt()
+        }
+        if (this.action === "Update an Employee's Role") {
+            console.log("You selected to Update an Employee's Role!");
+            displayPrompt()
+        }
+        if (this.action === "Quit") {
+            console.log("You selected to Quit!");
+            return;
+        }
+    })
 
-    }
-    if (answers.action === 'View All Roles') {
-        new Role().viewRole();
-        displayPrompt()
-    }
-    if (answers.action === 'View All Employees') {
-        new Employees().viewEmployees();
-        displayPrompt()
-    }
-    if (answers.action === 'Add a Department') {
-        console.log("You selected to Add a Department!");
-        displayPrompt()
-    }
-    if (answers.action === 'Add a Role') {
-        console.log("You selected to Add a Role!");
-        displayPrompt()
-    }
-    if (answers.action === 'Add an Employee') {
-        console.log("You selected to Add an Employee!");
-        displayPrompt()
-    }
-    if (answers.action === "Update an Employee's Role") {
-        console.log("You selected to Update an Employee's Role!");
-        displayPrompt()
-    }
-    if (answers.action === "Quit") {
-        console.log("You selected to Quit!");
-        return;
-    }
 }
 
 module.exports = displayPrompt;
