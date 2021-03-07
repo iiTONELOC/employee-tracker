@@ -1,4 +1,10 @@
 const inquirer = require('inquirer');
+const Departments = require('./Departments');
+const viewRole = require('./Roles');
+const viewEmployees = require('./Employees');
+const UI = require('../ulits/UI');
+
+
 
 class App {
     constructor() {
@@ -10,6 +16,7 @@ class App {
 
     }
     questionPrompt() {
+        new UI().displaySingBreak();
         inquirer
             .prompt([
                 {
@@ -30,17 +37,21 @@ class App {
                 }
             ])
             .then(({ action }) => {
+                new UI().displaySingBreak();
                 this.action = action
                 if (this.action === 'View All Departments') {
-                    console.log("You selected to view all Departments!");
+                    new Departments().viewDepartments();
+                    new UI().displayDblBreak();
                     this.questionPrompt();
                 }
                 if (this.action === 'View All Roles') {
-                    console.log("You selected to View All Roles!");
+                    viewRole();
+                    new UI().displayDblBreak();
                     this.questionPrompt();
                 }
                 if (this.action === 'View All Employees') {
-                    console.log("You selected to View All Employees!");
+                    viewEmployees();
+                    new UI().displayDblBreak();
                     this.questionPrompt();
                 }
                 if (this.action === 'Add a Department') {
@@ -65,6 +76,8 @@ class App {
                 }
             })
     }
+
 }
+
 
 module.exports = App;

@@ -1,3 +1,3 @@
-const App = require('./lib/App');
+const App = require('./db/App');
 
 new App().initializeApp();
