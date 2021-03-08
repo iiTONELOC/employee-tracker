@@ -18,8 +18,8 @@ class Employees {
         con.promise().query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, departments.department_name as department, role.salary, CONCAT(e.first_name, " ", e.last_name) as manager
         FROM employee
         inner join role ON (employee.role_id = role.id)
-        inner join departments on role.department_id = departments.id
-        left join employee as e on employee.manager_id = e.id;`)
+        inner join departments ON (role.department_id = departments.id)
+        left join employee as e ON (employee.manager_id = e.id);`)
             .then(([rows, fields]) => {
                 new UI().displaySingBreak()
                 console.table(rows);

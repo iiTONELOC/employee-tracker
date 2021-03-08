@@ -2,6 +2,7 @@ const inquirer = require('inquirer');
 const Departments = require('./Departments');
 const Role = require('./Roles');
 const Employees = require('./Employees');
+const UI = require('../ulits/UI');
 
 function displayPrompt() {
     inquirer
@@ -15,9 +16,8 @@ function displayPrompt() {
                     'View All Roles',
                     'View All Employees',
                     'Add a Department',
-                    'Add a Role',
-                    'Add an Employee',
-                    "Update an Employee",
+                    'View Options for Roles',
+                    'View Options for Employees',
                     'Quit'
                 ]
             },
@@ -30,69 +30,32 @@ function displayPrompt() {
                 validate: depInput => {
                     if (depInput) {
                         return true;
-
                     } else {
                         console.log('Please enter a name for the Department you wish to add!')
                         return false;
                     }
                 }
             },
-            // QUESTIONS FOR ADDING A ROLE TO THE DATABASE
+            // UPDATING EMPLOYEE RECORDS
             {
-                type: 'input',
-                message: 'What is the name of the Role you wish to add?',
-                name: 'addRole',
-                when: (data) => data.action === 'Add a Role',
-                validate: roleInput => {
-                    if (roleInput) {
-                        return true;
-
-                    } else {
-                        console.log('Please enter a name for the Role you wish to add!')
-                        return false;
-                    }
-                }
-            },
-            {
-                type: 'input',
-                message: 'What is the Salary for this position?',
-                name: 'roleSalary',
-                when: ({ addRole }) => addRole,
-                validate: salaryInput => {
-                    if (salaryInput) {
-                        return true;
-
-                    } else {
-                        console.log('Please enter a Salary for the Role you wish to add!')
-                        return false;
-                    }
-                }
-            },
-            {
-                type: 'input',
-                message: 'Enter the corresponding Department ID #?',
-                name: 'roleDepartment',
-                when: ({ roleSalary }) => roleSalary,
-                validate: departmentInput => {
-                    if (departmentInput) {
-                        return true;
-
-                    } else {
-                        console.log('Please enter a Department ID for the Role you wish to add!')
-                        return false;
-                    }
-                }
+                type: 'list',
+                name: 'action2',
+                message: 'Select an option for updating your employee',
+                choices: [
+                    'Add an Employee',
+                    'Update Employee Role',
+                ],
+                when: (data) => data.action === 'View Options for Employees',
             },
             // QUESTIONS FOR ADDING AN EMPLOYEE TO THE DATABASE
             {
                 type: 'input',
                 message: 'What is the FIRST name of the Employee you wish to add?',
                 name: 'addEmployee',
-                when: (data) => data.action === 'Add an Employee',
+                when: (data) => data.action2 === 'Add an Employee',
                 validate: employeeInput => {
                     if (employeeInput) {
                         return true;
-
                     } else {
                         console.log('Please enter a FIRST name for the Employee you wish to add!')
                         return false;
@@ -107,7 +70,6 @@ function displayPrompt() {
                 validate: lastNameInput => {
                     if (lastNameInput) {
                         return true;
-
                     } else {
                         console.log('Please enter a LAST name for the Employee you wish to add!')
                         return false;
@@ -122,7 +84,6 @@ function displayPrompt() {
                 validate: roleIDInput => {
                     if (roleIDInput) {
                         return true;
-
                     } else {
                         console.log('Please enter a ROLE ID for the Employee you wish to add!')
                         return false;
@@ -137,31 +98,39 @@ function displayPrompt() {
                 validate: managerIDInput => {
                     if (managerIDInput) {
                         return true;
-
                     } else {
                         console.log('Please enter  the Managers ID or NULL!')
                         return false;
                     }
                 }
             },
-            // UPDATING EMPLOYEE RECORDS
             {
                 type: 'list',
-                name: 'action2',
-                message: 'Select an option for updating your employee',
-                choices: [
-                    'Update Employee Role',
-                ],
-                when: (data) => data.action === 'Update an Employee',
+                name: 'createEmployee',
+                message: 'Would you like to add this employee to the database?',
+                choices: ['Yes', 'No'],
+                when: ({ managerID }) => managerID,
             },
-
-        ]).then(({ action, addDepartment, addRole, roleSalary, roleDepartment, addEmployee, lastName, roleID, managerID, action2 }) => {
+            // OPTIONS FOR ROLE TABLE
+            {
+                type: 'list',
+                name: 'action3',
+                message: 'Select an option for updating Roles',
+                choices: [
+                    'Add a new role to database.',
+                ],
+                when: (data) => data.action === 'View Options for Roles',
+            },
+            
+        ]).then(({ action, addDepartment, addEmployee, lastName, roleID, managerID, action2, action3, createEmployee}) => {
             this.action = action
             this.action2 = action2
+            this.action3 = action3
+            this.createEmployee = createEmployee
+
             if (this.action === 'View All Departments') {
                 new Departments().viewDepartments();
                 displayPrompt();
-
             }
             if (this.action === 'View All Roles') {
                 new Role().viewRole();
@@ -175,24 +144,21 @@ function displayPrompt() {
                 new Departments().addDepartment(addDepartment)
                 displayPrompt()
             }
-            if (this.action === 'Add a Role') {
-                new Role().addRole(addRole, roleSalary, roleDepartment)
+            if (this.action3 === 'Add a new role to database.') {
                 console.log("You selected to Add a Role!");
-
-                displayPrompt()
-            }
-            if (this.action === 'Add an Employee') {
+                new Role().initiateRoleUpdate();
+            } 
+            if (this.action2 === "Update Employee Role") {
+                console.log("You selected to Update an Employee's Role!");
+                new Employees().initiateEmployeeUpdate()    
+                // displayPrompt()                
+            }            
+            if (this.createEmployee === "Yes"){
                 new Employees().addEmployee(addEmployee, lastName, roleID, managerID)
-                console.log("You selected to Add an Employee!");
-                displayPrompt()
-            }
-            if (this.action === "Update an Employee") {
-                if (this.action2 === "Update Employee Role"){
-                    new Employees().initiateEmployeeUpdate()
-                    console.log("You selected to Update an Employee's Role!");
-                    // displayPrompt()
-                }
-        
+                new UI().displaySingBreak();
+                console.log(`Success! ${addEmployee} ${lastName} was added to the database.`);
+                new UI().displaySingBreak();
+                displayPrompt()                
             }
             if (this.action === "Quit") {
                 console.log("You selected to Quit!");
