@@ -17,7 +17,7 @@ function displayPrompt() {
                     'Add a Department',
                     'Add a Role',
                     'Add an Employee',
-                    "Update an Employee's Role",
+                    "Update an Employee",
                     'Quit'
                 ]
             },
@@ -143,10 +143,21 @@ function displayPrompt() {
                         return false;
                     }
                 }
-
             },
-        ]).then(({ action, addDepartment, addRole, roleSalary, roleDepartment, addEmployee, lastName, roleID, managerID }) => {
+            // UPDATING EMPLOYEE RECORDS
+            {
+                type: 'list',
+                name: 'action2',
+                message: 'Select an option for updating your employee',
+                choices: [
+                    'Update Employee Role',
+                ],
+                when: (data) => data.action === 'Update an Employee',
+            },
+
+        ]).then(({ action, addDepartment, addRole, roleSalary, roleDepartment, addEmployee, lastName, roleID, managerID, action2 }) => {
             this.action = action
+            this.action2 = action2
             if (this.action === 'View All Departments') {
                 new Departments().viewDepartments();
                 displayPrompt();
@@ -175,9 +186,13 @@ function displayPrompt() {
                 console.log("You selected to Add an Employee!");
                 displayPrompt()
             }
-            if (this.action === "Update an Employee's Role") {
-                console.log("You selected to Update an Employee's Role!");
-                displayPrompt()
+            if (this.action === "Update an Employee") {
+                if (this.action2 === "Update Employee Role"){
+                    new Employees().initiateEmployeeUpdate()
+                    console.log("You selected to Update an Employee's Role!");
+                    // displayPrompt()
+                }
+        
             }
             if (this.action === "Quit") {
                 console.log("You selected to Quit!");
