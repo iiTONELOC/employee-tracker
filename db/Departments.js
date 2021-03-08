@@ -27,14 +27,13 @@ class Departments {
     }
 
     addDepartment(data) {
-        this.data = data
         const con = mysql.createConnection(
             { host: 'localhost', user: 'root', password: password, database: 'employees' }
         );
         con.promise().query(`
                 INSERT INTO departments (department_name)
                 Values
-                ('${this.data}');`)
+                ('${data}');`)
             .catch(console.log)
             .then(() => con.end());
         

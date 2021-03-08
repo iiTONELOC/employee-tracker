@@ -47,7 +47,7 @@ function displayPrompt() {
                 ],
                 when: (data) => data.action === 'View Options for Employees',
             },
-            
+
             // OPTIONS FOR ROLE TABLE
             {
                 type: 'list',
@@ -58,43 +58,37 @@ function displayPrompt() {
                 ],
                 when: (data) => data.action === 'View Options for Roles',
             },
-            
-        ]).then(({ action, addDepartment, action2, action3 }) => {
-            this.action = action
-            this.action2 = action2
-            this.action3 = action3
-        
 
-            if (this.action === 'View All Departments') {
+        ]).then(({ action, addDepartment, action2, action3 }) => {
+
+            if (action === 'View All Departments') {
                 new Departments().viewDepartments();
                 displayPrompt();
             }
-            if (this.action === 'View All Roles') {
+            if (action === 'View All Roles') {
                 new Role().viewRole();
                 displayPrompt()
             }
-            if (this.action === 'View All Employees') {
+            if (action === 'View All Employees') {
                 new Employees().viewEmployees();
                 displayPrompt()
             }
-            if (this.action === 'Add a Department') {
+            if (action === 'Add a Department') {
                 new Departments().addDepartment(addDepartment)
                 displayPrompt()
             }
-            if (this.action2 === "Add an Employee"){
+            if (action2 === "Add an Employee") {
                 new Employees().initiateEmployeeAdd()
             }
-            if (this.action2 === "Update Employee Role") {
+            if (action2 === "Update Employee Role") {
                 console.log("You selected to Update an Employee's Role!");
-                new Employees().initiateEmployeeUpdate()               
-            }            
-            if (this.action3 === 'Add a new role to database.') {
+                new Employees().initiateEmployeeUpdate()
+            }
+            if (action3 === 'Add a new role to database.') {
                 console.log("You selected to Add a Role!");
                 new Role().initiateRoleUpdate();
-            } 
-            
-            
-            if (this.action === "Quit") {
+            }
+            if (action === "Quit") {
                 console.log("You selected to Quit!");
                 return;
             }

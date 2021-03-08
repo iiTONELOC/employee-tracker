@@ -68,26 +68,20 @@ class Role {
                     },
 
                 ]).then(({ role, department, roleSalary, home }) => {
-                    this.home = home
-                    this.role = role
-                    this.department = department
                     // get the department id
-                    deptID = this.department.split(' ', 1)
-                    this.roleSalary = roleSalary
-
-                    if (this.roleSalary) {
-                        new Role().addRole(this.role, this.roleSalary, deptID)
+                    deptID = department.split(' ', 1)
+                    if (roleSalary) {
+                        new Role().addRole(role, roleSalary, deptID)
                     }
-                    if (this.home) {
-                        if (this.home === 'Yes') {
+                    if (home) {
+                        if (home === 'Yes') {
                             new UI().displaySingBreak()
-                            console.log(`Success! The role: ${this.role} has been added to the database!`)
+                            console.log(`Success! The role: ${role} has been added to the database!`)
                             const displayPrompt = require('./QuestionPrompt')
-                            console.log(`Success! The role: ${this.role} has been added to the database!`)
                             displayPrompt()
                         } else {
                             new UI().displaySingBreak()
-                            console.log(`Success! The role: ${this.role} has been added to the database!`)
+                            console.log(`Success! The role: ${role} has been added to the database!`)
                             new UI().displaySingBreak()
                             new Role().initiateRoleUpdate();
                         }
@@ -115,16 +109,13 @@ class Role {
     }
 
     addRole(title, salary, department) {
-        this.title = title
-        this.salary = salary
-        this.department = department
         const con = mysql.createConnection(
             { host: 'localhost', user: 'root', password: password, database: 'employees' }
         );
         con.promise().query(`
                 INSERT INTO role (title, salary, department_id)
                 Values
-                ('${this.title}', ${this.salary}, ${this.department});
+                ('${title}', ${salary}, ${department});
                 `)
             .catch(console.log)
             .then(() => con.end());
