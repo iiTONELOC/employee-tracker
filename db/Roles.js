@@ -121,6 +121,10 @@ class Role {
             .then(() => con.end());
 
     }
+
+    deleteRoll(){
+        console.log(`You selected to delete a role from the database!`)
+    }
 }
 
 

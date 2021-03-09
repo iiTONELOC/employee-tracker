@@ -30,7 +30,7 @@ class Employees {
     }
 
     addEmployee(first_name, last_name, role_id, manager_id) {
-        
+
         const con = mysql.createConnection(
             { host: 'localhost', user: 'root', password: password, database: 'employees' }
         );
@@ -41,6 +41,90 @@ class Employees {
             .catch(console.log)
             .then(() => con.end());
 
+    }
+    updateEmployeeManager(manager, employee) {
+
+        const con = mysql.createConnection(
+            { host: 'localhost', user: 'root', password: password, database: 'employees' }
+        );
+        con.promise().query(`
+        UPDATE employee SET manager_id = ${manager} WHERE id = ${employee};`)
+            .catch(console.log).then(console.log(`Employee was successfully updated!`))
+            .then(() => con.end());
+    }
+
+    initiateUpdateEmployeeManager() {
+        let employeeID;
+        let managerID;
+        
+        console.log(`You selected to update an employee's manager!`)
+
+        // RETURNS THE NAME OF THE EMPLOYEES 
+        const con = mysql.createConnection(
+            { host: 'localhost', user: 'root', password: password, database: 'employees' }
+        );
+        con.promise().query(`
+        SELECT id, CONCAT(first_name, ' ', last_name) as name FROM employee;
+                `)
+            .catch(console.log)
+            .then(([rows, fields]) => {
+                const choiceData = rows.map(el => (el.id + ' ' + el.name))
+                let choiceData1 = [...choiceData]
+                choiceData1.push('NULL')
+            
+                
+
+                inquirer.prompt([
+                    {   // RETURNS THE NAMES OF THE EMPLOYEES IN A LIST 
+                        type: 'list',
+                        name: 'selectEmployee',
+                        message: 'Select an employee you wish to update from the list below.',
+                        choices: choiceData,
+
+                    },
+                    {
+                        type: 'list',
+                        name: 'manager',
+                        message: 'Assign a manager from the list below. If you want to remove a manager select `NULL`',
+                        choices: choiceData1,
+                        when: ({ selectEmployee }) => selectEmployee,
+                    },
+                    {
+                        type: 'list',
+                        name: 'home',
+                        message: 'Would you like to update another employee?',
+                        choices: ['Yes', 'No'],
+
+                    }
+                ]).then(({ selectEmployee, manager, home }) => {
+
+                    if (manager) {
+                        if (manager === 'NULL') {
+                            managerID = 'NULL'
+                            employeeID = selectEmployee.split(' ', 1)
+                            new Employees().updateEmployeeManager(managerID, employeeID)
+                        } else {
+                            employeeID = selectEmployee.split(' ', 1)
+                            managerID = manager.split(' ', 1)
+                            new Employees().updateEmployeeManager(managerID, employeeID)
+                        }
+                    }
+                    if (home === 'Yes') {
+                        new UI().displaySingBreak();
+                        console.log(`Success!`)
+                        new Employees().initiateUpdateEmployeeManager()
+                    } else {
+                        const displayPrompt = require('./QuestionPrompt')
+                        displayPrompt();
+                    }
+                })
+            })
+            .then(() => con.end());
+
+    }
+
+    initiateEmployeeDelete() {
+        console.log(`You selected to delete an employee!`)
     }
 
     initiateEmployeeUpdate() {
@@ -262,3 +346,6 @@ module.exports = Employees;
 
 //SQL to retrieve employees by name
 // SELECT e.id, CONCAT(e.first_name, ' ', e.last_name) as employee FROM employee LEFT JOIN employee as e on employee.id = e.id ;
+
+//SQL to update manager
+//UPDATE employee SET manager_id = ${} WHERE id = ${} ?

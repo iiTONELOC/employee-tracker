@@ -12,12 +12,15 @@ function displayPrompt() {
                 name: 'action',
                 message: 'What would you like to do?',
                 choices: [
+                    '___________________',
                     'View All Departments',
                     'View All Roles',
                     'View All Employees',
+                    '___________________',
                     'Add a Department',
                     'View Options for Roles',
                     'View Options for Employees',
+                    '___________________',
                     'Quit'
                 ]
             },
@@ -44,8 +47,17 @@ function displayPrompt() {
                 choices: [
                     'Add an Employee',
                     'Update Employee Role',
+                    "Update Employee's Manager",
+                    "Delete Employee"
                 ],
                 when: (data) => data.action === 'View Options for Employees',
+            }, 
+            {   // CONFIRM DELETE
+                type: 'list',
+                name: 'deleteEmployee',
+                message: 'Are you sure? This action can not be undone!',
+                choices: ['Yes', 'No'],
+                when: (data) => data.action2 === 'Delete Employee',
             },
 
             // OPTIONS FOR ROLE TABLE
@@ -55,12 +67,22 @@ function displayPrompt() {
                 message: 'Select an option for updating Roles',
                 choices: [
                     'Add a new role to database.',
+                    'Delete a role from database'
                 ],
                 when: (data) => data.action === 'View Options for Roles',
             },
+            {   // CONFIRM DELETE
+                type: 'list',
+                name: 'deleteRoll',
+                message: 'Are you sure? This action can not be undone!',
+                choices: ['Yes', 'No'],
+                when: (data) => data.action3 === 'Delete a role from database',
+            },
 
-        ]).then(({ action, addDepartment, action2, action3 }) => {
-
+        ]).then(({ action, addDepartment, action2, action3, deleteEmployee, deleteRoll }) => {
+            if (action === '___________________') {
+                displayPrompt();
+            }
             if (action === 'View All Departments') {
                 new Departments().viewDepartments();
                 displayPrompt();
@@ -84,9 +106,24 @@ function displayPrompt() {
                 console.log("You selected to Update an Employee's Role!");
                 new Employees().initiateEmployeeUpdate()
             }
+            if (action2 === "Update Employee's Manager") {
+                new Employees().initiateUpdateEmployeeManager()
+            }
+            if (deleteEmployee === 'Yes') {
+                new Employees().initiateEmployeeDelete()
+            }
+            if (deleteEmployee === 'No') {
+                displayPrompt()
+            }
             if (action3 === 'Add a new role to database.') {
                 console.log("You selected to Add a Role!");
                 new Role().initiateRoleUpdate();
+            }
+            if (deleteRoll === 'Yes') {
+                new Role().deleteRoll();
+            }
+            if (deleteRoll === 'No') {
+                displayPrompt()
             }
             if (action === "Quit") {
                 console.log("You selected to Quit!");
