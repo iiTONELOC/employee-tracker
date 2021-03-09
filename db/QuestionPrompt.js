@@ -15,7 +15,7 @@ function displayPrompt() {
                     '___________________',
                     'View All Departments',
                     'View All Roles',
-                    'View All Employees',
+                    'View Employees',
                     '___________________',
                     'View Options for Departments',
                     'View Options for Roles',
@@ -24,6 +24,16 @@ function displayPrompt() {
                     'Quit',
 
                 ]
+            },
+            {   // Options for viewing Employees
+                type: 'list',
+                name: 'employeeView',
+                message: 'Select an option for viewing your employees:',
+                choices: [
+                    'View All Employees',
+                    'View Employees by manager',                
+                ],
+                when: (data) => data.action === 'View Employees',
             },
             // Question for adding a department
             {
@@ -97,7 +107,7 @@ function displayPrompt() {
                 when: (data) => data.action4 === 'Delete a role from database',
             },
 
-        ]).then(({ action, action2, action3, action4, addDepartment, deleteEmployee, deleteRole, deleteDepartment }) => {
+        ]).then(({ action, action2, action3, action4, addDepartment, deleteEmployee, deleteRole, deleteDepartment, employeeView }) => {
             if (action === '___________________') {
                 displayPrompt();
             }
@@ -109,8 +119,12 @@ function displayPrompt() {
                 new Role().viewRole();
                 displayPrompt()
             }
-            if (action === 'View All Employees') {
+            if (employeeView === 'View All Employees') {
                 new Employees().viewEmployees();
+                displayPrompt()
+            }
+            if (employeeView === 'View Employees by manager') {
+                new Employees().viewEmployeesByManager();
                 displayPrompt()
             }
             if (action2 === 'Add a Department') {
