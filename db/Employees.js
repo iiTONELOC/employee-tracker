@@ -2,7 +2,6 @@
 const mysql = require('mysql2');
 const password = require('../password');
 const cTable = require('console.table');
-const UI = require('../ulits/UI');
 const inquirer = require('inquirer');
 
 
@@ -22,15 +21,15 @@ class Employees {
         INNER JOIN departments ON (role.department_id = departments.id)
         LEFT JOIN employee AS e ON (employee.manager_id = e.id);`)
             .then(([rows, fields]) => {
-                new UI().displaySingBreak()
+                console.log(`\n`)
                 console.table(rows);
-                new UI().displayDblBreak()
+                console.log(`\n\n`)
             })
             .catch(console.log)
             .then(() => con.end());
     }
 
-    viewEmployeesByManager() {
+    viewEmployeesBy(data) {
         // create the connection
         const con = mysql.createConnection(
             { host: 'localhost', user: 'root', password: password, database: 'employees' }
@@ -39,16 +38,15 @@ class Employees {
         FROM employee 
         INNER JOIN role ON (employee.role_id = role.id) 
         INNER JOIN departments ON (role.department_id = departments.id)
-        LEFT JOIN employee AS e ON (employee.manager_id = e.id ) ORDER BY manager;`)
+        LEFT JOIN employee AS e ON (employee.manager_id = e.id ) ORDER BY ${data};`)
             .then(([rows, fields]) => {
-                new UI().displaySingBreak()
+                console.log(`\n`)
                 console.table(rows);
-                new UI().displayDblBreak()
+                console.log(`\n\n`)
             })
             .catch(console.log)
             .then(() => con.end());
     }
-
     addEmployee(first_name, last_name, role_id, manager_id) {
 
         const con = mysql.createConnection(
@@ -84,7 +82,7 @@ class Employees {
     }
 
     initiateUpdateEmployeeManager() {
-        
+
         // RETURNS THE NAME OF THE EMPLOYEES 
         const con = mysql.createConnection(
             { host: 'localhost', user: 'root', password: password, database: 'employees' }
@@ -111,7 +109,6 @@ class Employees {
                         message: 'Assign a manager from the list below. If you want to remove a manager select `NULL`',
                         choices: choiceData1,
                         when: ({ selectEmployee }) => selectEmployee,
-
                     },
                     {
                         type: 'list',
@@ -128,7 +125,7 @@ class Employees {
     initiateEmployeeDelete(choiceData) {
         choiceData
 
-        console.log(`You selected to delete an employee!`)
+        console.log(`\nYou selected to delete an employee!`)
         // RETURNS THE NAME OF THE EMPLOYEES 
         const con = mysql.createConnection(
             { host: 'localhost', user: 'root', password: password, database: 'employees' }
@@ -160,20 +157,17 @@ class Employees {
                         new Employees().deleteEmployee(employeeID)
                     }
                     if (home === 'Yes') {
-                        new UI().displaySingBreak();
-                        console.log(`Success! \n${selectEmployee} has been deleted!`)
+                        console.log(`\nSuccess! \n${selectEmployee} has been deleted!`)
                         choiceDataRerun = choiceData
-                        new Employees().initiateEmployeeDelete(choiceData)
-                    } else {
-                        new UI().displaySingBreak();
-                        console.log(`Success! \n${selectEmployee}s been deleted!`)
-                        const displayPrompt = require('./QuestionPrompt')
+                        return new Employees().initiateEmployeeDelete(choiceData)
+                    } if (home === 'No') {
+                        console.log(`\nSuccess! \n${selectEmployee}s been deleted!`)
+                        const displayPrompt = require('../lib/QuestionPrompt')
                         displayPrompt();
                     }
                 })
             })
             .then(() => con.end());
-
     }
 
     initiateEmployeeUpdate() {
@@ -229,7 +223,7 @@ class Employees {
                         {
                             type: 'list',
                             name: 'home',
-                            message: '\nReturn to Main Menu?',
+                            message: '\nWould you like to update another employee?',
                             choices: ['Yes', 'No'],
                             when: ({ action2 }) => action2,
                         }
@@ -253,33 +247,31 @@ class Employees {
                             WHERE id = ${employeeID};
                                     `)
                                 .then(() => {
-                                    new UI().displaySingBreak();
-                                    console.log(`Success! \nEmployee # ${nameData}'s role has been updated to role_id: ${roleData}`)
+                                    console.log(`\nSuccess! \nEmployee # ${nameData}'s role has been updated to role_id: ${roleData}`)
                                 })
                                 .catch(console.log)
                                 .then(() => con2.end())
                         }
                         // WHEN FINISHED YOU CAN EDIT MORE EMPLOYEES OR RETURN TO MAIN 
                         if (home) {
-                                
-                            if (home === 'Yes') {
-                                new UI().displaySingBreak();
-                                const displayPrompt = require('./QuestionPrompt')
+
+                            if (home === 'No') {
+                                console.log(`\n`);
+                                const displayPrompt = require('../lib/QuestionPrompt')
                                 displayPrompt()
                             }
-                            if (home === 'No') {
-                                new Employees().initiateEmployeeUpdate(choiceData3);
+                            if (home === 'Yes') {
+                                return new Employees().initiateEmployeeUpdate();
                             }
                         }
                     })
                 }
-
             })
             .then(() => con.end());
     }
 
     initiateEmployeeAdd() {
-        console.log("%c\nYou selected to Add an Employee to the database!", "color: green");
+        console.log("\nYou selected to Add an Employee to the database!");
 
         let managerID;
         let roleID;
@@ -309,8 +301,8 @@ class Employees {
             .then(([rows, fields]) => {
                 const choiceData = rows.map(el => (el.id + ' ' + el.name))
                 if (choiceData3 === undefined) {
-                    console.log(`An unknown error has occurred. \n Please try your request again.`)
-                    new Employees().initiateEmployeeAdd()
+                    console.log(`\nAn unknown error has occurred.\nTrying your request again.`)
+                    return new Employees().initiateEmployeeAdd()
                 } else {
                     inquirer.prompt([
                         {   // EMPLOYEE FIRST NAME
@@ -377,34 +369,19 @@ class Employees {
 
                         if (home === 'Yes') {
                             new Employees().addEmployee(firstName, lastName, roleID, managerID)
-                            new UI().displaySingBreak();
-                            console.log(`Success! \n${firstName} ${lastName} has been added to the database!`)
-                            new Employees().initiateEmployeeAdd()
+                            console.log(`\nSuccess! \n${firstName} ${lastName} has been added to the database!`)
+                            return new Employees().initiateEmployeeAdd()
                         } else {
                             new Employees().addEmployee(firstName, lastName, roleID, managerID)
-                            new UI().displaySingBreak();
-                            console.log(`Success! \n${firstName} ${lastName} has been added to the database!`)
-                            new Employees().initiateEmployeeAdd()
-                            const displayPrompt = require('./QuestionPrompt')
-                            displayPrompt();
+                            console.log(`\nSuccess! \n${firstName} ${lastName} has been added to the database!\n`)
+                            const displayPrompt = require('../lib/QuestionPrompt')
+                            return displayPrompt();
                         }
                     })
                 }
-
-
             })
             .then(() => con8.end());
     }
 }
 
 module.exports = Employees;
-
-//SQL to update employee
-// UPDATE employee SET role_id = ${}
-// WHERE id = ${};
-
-//SQL to retrieve employees by name
-// SELECT e.id, CONCAT(e.first_name, ' ', e.last_name) as employee FROM employee LEFT JOIN employee as e on employee.id = e.id ;
-
-//SQL to update manager
-//UPDATE employee SET manager_id = ${} WHERE id = ${} ?

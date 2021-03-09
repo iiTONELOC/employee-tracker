@@ -2,7 +2,6 @@
 const mysql = require('mysql2');
 const password = require('../password');
 const cTable = require('console.table');
-const UI = require('../utils/UI');
 const inquirer = require('inquirer');
 
 
@@ -18,9 +17,9 @@ class Departments {
         );
         con.promise().query("SELECT * FROM departments;")
             .then(([rows, fields]) => {
-                new UI().displaySingBreak();
+                console.log(`\n`)
                 console.table(rows);
-                new UI().displayDblBreak();
+                console.log(`\n`)
             })
             .catch(console.log)
             .then(() => con.end());
@@ -34,9 +33,9 @@ class Departments {
                 INSERT INTO departments (department_name)
                 Values
                 ('${data}');`).then(() => {
-            console.log(`Success!\n${data} was added to Departments`);
-            const displayPrompt = require('./QuestionPrompt')
-            displayPrompt();
+            console.log(`\nSuccess!\n${data} was added to Departments`);
+            const displayPrompt = require('../lib/QuestionPrompt')
+            return displayPrompt();
         })
             .catch(console.log)
             .then(() => con.end());
@@ -48,15 +47,15 @@ class Departments {
         );
         con.promise().query(`
                 DELETE FROM departments WHERE id = ${data}`).then(() => {
-            console.log(`Success!\n${department} was removed from Departments`);
-            const displayPrompt = require('./QuestionPrompt')
-            displayPrompt();
+            console.log(`\nSuccess!\n${department} was removed from Departments`);
+            const displayPrompt = require('../lib/QuestionPrompt')
+            return displayPrompt();
         })
             .catch(console.log)
             .then(() => con.end());
     }
     deleteDepartmentInit() {
-        console.log(`You selected to delete a department!`)
+        console.log(`\nYou selected to delete a department!\n`)
         // create the connection
         const con = mysql.createConnection(
             { host: 'localhost', user: 'root', password: password, database: 'employees' }

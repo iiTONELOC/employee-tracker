@@ -1,5 +1,5 @@
 //const UI = require('../ulits/UI');
-const displayPrompt = require('./db/QuestionPrompt')
+const displayPrompt = require('./lib/QuestionPrompt')
 
 
 

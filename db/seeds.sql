@@ -41,19 +41,19 @@ VALUES
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
 ('James', 'Fraser', 1, NULL),
-('Jack', 'London', 3, 1),
-('Andy', 'Louis', 1, NULL),
-('Mary', 'McDowell', 3, 1),
-('Peter', 'Arnold', 1, NULL),
-('Hugh', 'Jorgin', 3, 1),
-('Jennifer', 'Smith', 1, NULL),
-('Billy', 'Jones', 3, 1),
-('Alicia', 'DiPietro', 1, NULL),
-('Hector', 'Fielderman', 3, 1),
-('Margaret', 'Bronsen', 1, NULL),
-('Luis', 'London', 3, 1),
-('Edward', 'Pinkerton', 1, NULL),
-('Alex', 'McCarthy', 3, 1);
+('Jack', 'London', 2, 1),
+('Andy', 'Louis', 3, 2),
+('Mary', 'McDowell', 5, NULL),
+('Peter', 'Arnold', 10, NULL),
+('Hugh', 'Jorgin', 11, 5),
+('Jennifer', 'Smith', 14, NULL),
+('Billy', 'Jones', 13, 7),
+('Alicia', 'DiPietro', 23, NULL),
+('Hector', 'Fielderman', 24, 9),
+('Margaret', 'Bronsen', 25, 9),
+('Luis', 'London', 4, 1),
+('Edward', 'Pinkerton', 20, 14),
+('Alex', 'McCarthy', 19, NULL);
 
 
 

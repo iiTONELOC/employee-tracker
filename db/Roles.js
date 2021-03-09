@@ -2,7 +2,6 @@
 const mysql = require('mysql2');
 const password = require('../password');
 const cTable = require('console.table');
-const UI = require('../utils/UI');
 const inquirer = require('inquirer');
 
 class Role {
@@ -75,15 +74,12 @@ class Role {
                     }
                     if (home) {
                         if (home === 'Yes') {
-                            new UI().displaySingBreak()
-                            console.log(`Success! The role: ${role} has been added to the database!`)
-                            const displayPrompt = require('./QuestionPrompt')
-                            displayPrompt()
+                            console.log(`\nSuccess! The role: ${role} has been added to the database!\n`)
+                            const displayPrompt = require('../lib/QuestionPrompt')
+                            return displayPrompt()
                         } else {
-                            new UI().displaySingBreak()
-                            console.log(`Success! The role: ${role} has been added to the database!`)
-                            new UI().displaySingBreak()
-                            new Role().initiateRoleUpdate();
+                            console.log(`\nSuccess! The role: ${role} has been added to the database!\n`)
+                            return new Role().initiateRoleUpdate();
                         }
                     }
                 })
@@ -100,9 +96,9 @@ class Role {
         );
         con.promise().query("SELECT * FROM role;")
             .then(([rows, fields]) => {
-                new UI().displaySingBreak()
+                console.log(`\n`)
                 console.table(rows);
-                new UI().displayDblBreak()
+                console.log(`\n`)
             })
             .catch(console.log)
             .then(() => con.end());
@@ -121,21 +117,21 @@ class Role {
             .then(() => con.end());
 
     }
-    deleteRole(data, role){
+    deleteRole(data, role) {
         const con = mysql.createConnection(
             { host: 'localhost', user: 'root', password: password, database: 'employees' }
         );
         con.promise().query(`
                 DELETE FROM role WHERE id = ${data}`).then(() => {
             console.log(`Success!\n${role} was removed from the database!`);
-            const displayPrompt = require('./QuestionPrompt')
+            const displayPrompt = require('../lib/QuestionPrompt')
             displayPrompt();
         })
             .catch(console.log)
             .then(() => con.end());
     }
 
-    deleteRoleInit(){
+    deleteRoleInit() {
         console.log(`You selected to delete a role from the database!`)
         // create the connection
         const con = mysql.createConnection(
@@ -145,19 +141,19 @@ class Role {
             .then(([rows, fields]) => {
                 const choiceData = rows.map(el => (el.id + ' ' + el.title))
 
-                    inquirer.prompt([
-                        {   // RETURNS THE NAMES OF THE Departments IN A LIST 
-                            type: 'list',
-                            name: 'selectRole',
-                            message: 'Select the role you wish to delete',
-                            choices: choiceData,
-                        },
-                    ])
-                        .then(({ selectRole }) => {
-                            let roleID = selectRole.split(' ', 1)
-                            new Role().deleteRole(roleID,selectRole)
-                        })
-                
+                inquirer.prompt([
+                    {   // RETURNS THE NAMES OF THE Departments IN A LIST 
+                        type: 'list',
+                        name: 'selectRole',
+                        message: 'Select the role you wish to delete',
+                        choices: choiceData,
+                    },
+                ])
+                    .then(({ selectRole }) => {
+                        let roleID = selectRole.split(' ', 1)
+                        new Role().deleteRole(roleID, selectRole)
+                    })
+
             })
     }
 }
