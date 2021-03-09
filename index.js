@@ -1,3 +1,5 @@
 const App = require('./App');
 
-new App().initializeApp();
+
+new App().firstRun();
+
