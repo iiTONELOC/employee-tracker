@@ -56,8 +56,8 @@ class Employees {
     initiateUpdateEmployeeManager() {
         let employeeID;
         let managerID;
+
         
-        console.log(`You selected to update an employee's manager!`)
 
         // RETURNS THE NAME OF THE EMPLOYEES 
         const con = mysql.createConnection(
@@ -71,8 +71,6 @@ class Employees {
                 const choiceData = rows.map(el => (el.id + ' ' + el.name))
                 let choiceData1 = [...choiceData]
                 choiceData1.push('NULL')
-            
-                
 
                 inquirer.prompt([
                     {   // RETURNS THE NAMES OF THE EMPLOYEES IN A LIST 
@@ -80,7 +78,6 @@ class Employees {
                         name: 'selectEmployee',
                         message: 'Select an employee you wish to update from the list below.',
                         choices: choiceData,
-
                     },
                     {
                         type: 'list',
@@ -88,35 +85,44 @@ class Employees {
                         message: 'Assign a manager from the list below. If you want to remove a manager select `NULL`',
                         choices: choiceData1,
                         when: ({ selectEmployee }) => selectEmployee,
+                        
                     },
                     {
                         type: 'list',
                         name: 'home',
                         message: 'Would you like to update another employee?',
                         choices: ['Yes', 'No'],
-
                     }
                 ]).then(({ selectEmployee, manager, home }) => {
-
-                    if (manager) {
-                        if (manager === 'NULL') {
-                            managerID = 'NULL'
-                            employeeID = selectEmployee.split(' ', 1)
-                            new Employees().updateEmployeeManager(managerID, employeeID)
+                    if (manager === selectEmployee){
+                        console.log('The employee and manager cannot be the same. \nIf this employee has no manager select NULL');
+                        new Employees().initiateUpdateEmployeeManager()
+                    }else{
+                        if (manager) {
+                            if (manager === 'NULL') {
+                                managerID = 'NULL'
+                                employeeID = selectEmployee.split(' ', 1)
+                                new Employees().updateEmployeeManager(managerID, employeeID)
+                            } else {
+                                employeeID = selectEmployee.split(' ', 1)
+                                managerID = manager.split(' ', 1)
+                                new Employees().updateEmployeeManager(managerID, employeeID)
+                            }
+                        }
+                        if (home === 'Yes') {
+                            new UI().displaySingBreak();
+                            console.log(`Success! \n${selectEmployee}'s manager has been updated to: ${manager}`)
+                            new Employees().initiateUpdateEmployeeManager()
                         } else {
-                            employeeID = selectEmployee.split(' ', 1)
-                            managerID = manager.split(' ', 1)
-                            new Employees().updateEmployeeManager(managerID, employeeID)
+                            new UI().displaySingBreak();
+                            console.log(`Success! \n${selectEmployee}'s manager has been updated to: ${manager}`)
+                            const displayPrompt = require('./QuestionPrompt')
+                            displayPrompt();
                         }
                     }
-                    if (home === 'Yes') {
-                        new UI().displaySingBreak();
-                        console.log(`Success!`)
-                        new Employees().initiateUpdateEmployeeManager()
-                    } else {
-                        const displayPrompt = require('./QuestionPrompt')
-                        displayPrompt();
-                    }
+                    
+
+                    
                 })
             })
             .then(() => con.end());
@@ -130,7 +136,7 @@ class Employees {
     initiateEmployeeUpdate() {
         let employeeID;
         let roleID;
-        let choiceData2;
+        let choiceData3;
         let nameData = [];
         let roleData = [];
 
@@ -143,7 +149,8 @@ class Employees {
                 `)
             .catch(console.log)
             .then(([rows, fields]) => {
-                choiceData2 = rows.map(el => (el.id + ' ' + el.title))
+                const choiceData2 = rows.map(el => (el.id + ' ' + el.title))
+                choiceData3 = [...choiceData2]
             })
             .then(() => con1.end());
         // RETURNS THE NAME OF THE EMPLOYEES 
@@ -156,65 +163,72 @@ class Employees {
             .catch(console.log)
             .then(([rows, fields]) => {
                 const choiceData = rows.map(el => (el.id + ' ' + el.name))
-
-                inquirer.prompt([
-                    {   // RETURNS THE NAMES OF THE EMPLOYEES IN A LIST 
-                        type: 'list',
-                        name: 'action',
-                        message: 'Select an employee from the list below.',
-                        choices: choiceData
-                    },
-                    {   // RETURNS THE ROLES IN A LIST
-                        type: 'list',
-                        name: 'action2',
-                        message: 'Select a new Role from the list below.',
-                        choices: choiceData2,
-                        when: ({ action }) => action,
-                    },
-                    {
-                        type: 'list',
-                        name: 'home',
-                        message: 'Return to Main Menu?',
-                        choices: ['Yes', 'No'],
-                        when: ({ action2 }) => action2,
-                    }
-                ]).then(({ action, action2, home }) => {
-                    // GETS EMPLOYEE ID FOR USE IN THE QUERY
-                    employeeID = action.split(' ', 1)
-                    // STORES NAME AND ID TO DISPLAY LATER IN A MESSAGE
-                    nameData.push(action)
-                    // STORES THE ROLE ID FOR USE IN THE QUERY
-                    roleID = action2.split(' ', 1)
-                    // STORES THE ROLE DESCRIPTION TO DISPLAY LATER IN A MESSAGE
-                    roleData.push(action2)
-                    // WHEN THE ROLE HAS BEEN SELECTED THE QUERY IS RUN TO UPDATE THE DATABASE
-                    if (action2) {
-                        // console.log (`The role for ${name} has been updated to ${action2}`)
-                        const con2 = mysql.createConnection(
-                            { host: 'localhost', user: 'root', password: password, database: 'employees' }
-                        );
-
-                        con2.promise().query(`
-                        UPDATE employee SET role_id = ${roleID}
-                        WHERE id = ${employeeID};
-                                `)
-                            .then(() => {
-                                new UI().displaySingBreak();
-                                console.log(`Success! Employee # ${nameData}'s Role was updated to role_id: ${roleData}`)
-                            })
-                            .catch(console.log)
-                            .then(() => con2.end())
-                    }
-                    // WHEN FINISHED YOU CAN EDIT MORE EMPLOYEES OR RETURN TO MAIN 
-                    if (home) {
-                        if (home === 'Yes') {
-                            const displayPrompt = require('./QuestionPrompt')
-                            displayPrompt()
-                        } else {
-                            new Employees().initiateEmployeeUpdate();
+            
+                //SOMETIMES QUERY IS RETURNING UNDEFINED IF SO RUN AGAIN
+                if (choiceData3 === undefined) {
+                    new Employees().initiateEmployeeUpdate()
+                } else {
+                    inquirer.prompt([
+                        {   // RETURNS THE NAMES OF THE EMPLOYEES IN A LIST 
+                            type: 'list',
+                            name: 'action',
+                            message: 'Select an employee from the list below.',
+                            choices: choiceData
+                        },
+                        {   // RETURNS THE ROLES IN A LIST
+                            type: 'list',
+                            name: 'action2',
+                            message: 'Select a new Role from the list below.',
+                            choices: choiceData3,
+                            when: ({ action }) => action,
+                            
+                        },
+                        {
+                            type: 'list',
+                            name: 'home',
+                            message: 'Return to Main Menu?',
+                            choices: ['Yes', 'No'],
+                            when: ({ action2 }) => action2,
                         }
-                    }
-                })
+                    ]).then(({ action, action2, home }) => {
+                        // GETS EMPLOYEE ID FOR USE IN THE QUERY
+                        employeeID = action.split(' ', 1)
+                        // STORES NAME AND ID TO DISPLAY LATER IN A MESSAGE
+                        nameData.push(action)
+                        // STORES THE ROLE ID FOR USE IN THE QUERY
+                        roleID = action2.split(' ', 1)
+                        // STORES THE ROLE DESCRIPTION TO DISPLAY LATER IN A MESSAGE
+                        roleData.push(action2)
+                        // WHEN THE ROLE HAS BEEN SELECTED THE QUERY IS RUN TO UPDATE THE DATABASE
+                        if (action2) {
+
+                            const con2 = mysql.createConnection(
+                                { host: 'localhost', user: 'root', password: password, database: 'employees' }
+                            );
+                            con2.promise().query(`
+                            UPDATE employee SET role_id = ${roleID}
+                            WHERE id = ${employeeID};
+                                    `)
+                                .then(() => {
+                                    new UI().displaySingBreak();
+                                    console.log(`Success! \nEmployee # ${nameData}'s role has been updated to role_id: ${roleData}`)
+                                })
+                                .catch(console.log)
+                                .then(() => con2.end())
+                        }
+                        // WHEN FINISHED YOU CAN EDIT MORE EMPLOYEES OR RETURN TO MAIN 
+                        if (home) {
+                            if (home === 'Yes') {
+                                const displayPrompt = require('./QuestionPrompt')
+                                displayPrompt()
+                            }
+                            if (home === 'No') {
+                                new Employees().initiateEmployeeUpdate(choiceData3);
+                            }
+                        }
+                    })
+                }
+
             })
             .then(() => con.end());
     }
@@ -223,8 +237,6 @@ class Employees {
         new UI().displaySingBreak();
         console.log("You selected to Add an Employee to the database!");
 
-        //need list of roles, capture role id 
-        // RETURNS ROLES TO SELECT FROM 
         let managerID;
         let roleID;
         let choiceData3;
@@ -244,10 +256,10 @@ class Employees {
             })
             .then(() => con1.end());
         // RETURNS THE NAME OF THE EMPLOYEES 
-        const con = mysql.createConnection(
+        const con8 = mysql.createConnection(
             { host: 'localhost', user: 'root', password: password, database: 'employees' }
         );
-        con.promise().query(`
+        con8.promise().query(`
         SELECT id, CONCAT(first_name, ' ', last_name) as name FROM employee;
                 `)
             .catch(console.log)
@@ -308,13 +320,11 @@ class Employees {
                         name: 'home',
                         message: 'Would you like to add another employee?',
                         choices: ['Yes', 'No'],
-
                     }
                 ]).then(({ firstName, lastName, role, manager, confirmAddManager, home }) => {
                     if (confirmAddManager === false) {
                         managerID = 'NULL'
                     } else {
-                        manager = manager
                         managerID = manager.split(' ', 1)
                     }
                     roleID = role.split(' ', 1)
@@ -322,19 +332,19 @@ class Employees {
                     if (home === 'Yes') {
                         new Employees().addEmployee(firstName, lastName, roleID, managerID)
                         new UI().displaySingBreak();
-                        console.log(`Success!`)
+                        console.log(`Success! \n${firstName} ${lastName} has been added to the database!`)
                         new Employees().initiateEmployeeAdd()
                     } else {
                         new Employees().addEmployee(firstName, lastName, roleID, managerID)
                         new UI().displaySingBreak();
-                        console.log(`Success!`)
+                        console.log(`Success! \n${firstName} ${lastName} has been added to the database!`)
                         new Employees().initiateEmployeeAdd()
                         const displayPrompt = require('./QuestionPrompt')
                         displayPrompt();
                     }
                 })
             })
-            .then(() => con.end());
+            .then(() => con8.end());
     }
 }
 

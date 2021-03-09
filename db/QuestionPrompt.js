@@ -126,7 +126,7 @@ function displayPrompt() {
                 displayPrompt()
             }
             if (action === "Quit") {
-                console.log("You selected to Quit!");
+                console.log(`\nYou selected to Quit! \nGood Bye!`);
                 return;
             }
         })
