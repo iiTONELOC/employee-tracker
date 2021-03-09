@@ -33,10 +33,14 @@ class Departments {
         con.promise().query(`
                 INSERT INTO departments (department_name)
                 Values
-                ('${data}');`)
+                ('${data}');`).then(() => {
+            console.log(`Success!\n${data} was added to Departments`);
+            const displayPrompt = require('./QuestionPrompt')
+            displayPrompt();
+        })
             .catch(console.log)
             .then(() => con.end());
-        
+
     }
 }
 
