@@ -21,7 +21,8 @@ function displayPrompt() {
                     'View Options for Roles',
                     'View Options for Employees',
                     '___________________',
-                    'Quit'
+                    'Quit',
+                
                 ]
             },
             // Question for adding a department
@@ -51,7 +52,7 @@ function displayPrompt() {
                     "Delete Employee"
                 ],
                 when: (data) => data.action === 'View Options for Employees',
-            }, 
+            },
             {   // CONFIRM DELETE
                 type: 'list',
                 name: 'deleteEmployee',
@@ -74,7 +75,7 @@ function displayPrompt() {
             {   // CONFIRM DELETE
                 type: 'list',
                 name: 'deleteRoll',
-                message: 'Are you sure? This action can not be undone!',
+                message: '\nAre you sure? This action can NOT be undone!',
                 choices: ['Yes', 'No'],
                 when: (data) => data.action3 === 'Delete a role from database',
             },
@@ -93,10 +94,6 @@ function displayPrompt() {
             }
             if (action === 'View All Employees') {
                 new Employees().viewEmployees();
-                displayPrompt()
-            }
-            if (action === 'Add a Department') {
-                new Departments().addDepartment(addDepartment)
                 displayPrompt()
             }
             if (action2 === "Add an Employee") {

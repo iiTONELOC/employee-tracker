@@ -53,11 +53,21 @@ class Employees {
             .then(() => con.end());
     }
 
+    deleteEmployee(employeeID) {
+        const con = mysql.createConnection(
+            { host: 'localhost', user: 'root', password: password, database: 'employees' }
+        );
+        con.promise().query(`
+                DELETE FROM employee WHERE id = ${employeeID};`)
+            .catch(console.log)
+            .then(() => con.end());
+    }
+
     initiateUpdateEmployeeManager() {
         let employeeID;
         let managerID;
 
-        
+
 
         // RETURNS THE NAME OF THE EMPLOYEES 
         const con = mysql.createConnection(
@@ -85,19 +95,19 @@ class Employees {
                         message: 'Assign a manager from the list below. If you want to remove a manager select `NULL`',
                         choices: choiceData1,
                         when: ({ selectEmployee }) => selectEmployee,
-                        
+
                     },
                     {
                         type: 'list',
                         name: 'home',
-                        message: 'Would you like to update another employee?',
+                        message: '\nWould you like to update another employee?',
                         choices: ['Yes', 'No'],
                     }
                 ]).then(({ selectEmployee, manager, home }) => {
-                    if (manager === selectEmployee){
+                    if (manager === selectEmployee) {
                         console.log('The employee and manager cannot be the same. \nIf this employee has no manager select NULL');
                         new Employees().initiateUpdateEmployeeManager()
-                    }else{
+                    } else {
                         if (manager) {
                             if (manager === 'NULL') {
                                 managerID = 'NULL'
@@ -120,17 +130,64 @@ class Employees {
                             displayPrompt();
                         }
                     }
-                    
 
-                    
+
+
                 })
             })
             .then(() => con.end());
 
     }
 
-    initiateEmployeeDelete() {
+    initiateEmployeeDelete(choiceData) {
+        choiceData
+
         console.log(`You selected to delete an employee!`)
+        // RETURNS THE NAME OF THE EMPLOYEES 
+        const con = mysql.createConnection(
+            { host: 'localhost', user: 'root', password: password, database: 'employees' }
+        );
+        con.promise().query(`
+        SELECT id, CONCAT(first_name, ' ', last_name) as name FROM employee;
+                `)
+            .catch(console.log)
+            .then(([rows, fields]) => {
+                let choiceData = rows.map(el => (el.id + ' ' + el.name))
+
+                inquirer.prompt([
+                    {   // RETURNS THE NAMES OF THE EMPLOYEES IN A LIST 
+                        type: 'list',
+                        name: 'selectEmployee',
+                        message: 'Select an employee you wish to delete from the list below.',
+                        choices: choiceData,
+                    },
+                    {
+                        type: 'list',
+                        name: 'home',
+                        message: '\nWould you like to delete another employee?',
+                        choices: ['Yes', 'No'],
+                    }
+                ]).then(({ selectEmployee, home }) => {
+                    let employeeID = selectEmployee.split(' ', 1)
+                    let choiceDataRerun = choiceData.filter(el => el != selectEmployee)
+                    if (selectEmployee) {
+                        new Employees().deleteEmployee(employeeID)
+                    }
+                    if (home === 'Yes') {
+                        new UI().displaySingBreak();
+                        console.log(`Success! \n${selectEmployee} has been deleted!`)
+                        choiceDataRerun = choiceData
+                        new Employees().initiateEmployeeDelete(choiceData)
+                    } else {
+                        new UI().displaySingBreak();
+                        console.log(`Success! \n${selectEmployee}s been deleted!`)
+                        const displayPrompt = require('./QuestionPrompt')
+                        displayPrompt();
+                    }
+                })
+            })
+            .then(() => con.end());
+
     }
 
     initiateEmployeeUpdate() {
@@ -163,7 +220,7 @@ class Employees {
             .catch(console.log)
             .then(([rows, fields]) => {
                 const choiceData = rows.map(el => (el.id + ' ' + el.name))
-            
+
                 //SOMETIMES QUERY IS RETURNING UNDEFINED IF SO RUN AGAIN
                 if (choiceData3 === undefined) {
                     new Employees().initiateEmployeeUpdate()
@@ -181,12 +238,12 @@ class Employees {
                             message: 'Select a new Role from the list below.',
                             choices: choiceData3,
                             when: ({ action }) => action,
-                            
+
                         },
                         {
                             type: 'list',
                             name: 'home',
-                            message: 'Return to Main Menu?',
+                            message: '\nReturn to Main Menu?',
                             choices: ['Yes', 'No'],
                             when: ({ action2 }) => action2,
                         }
@@ -218,7 +275,9 @@ class Employees {
                         }
                         // WHEN FINISHED YOU CAN EDIT MORE EMPLOYEES OR RETURN TO MAIN 
                         if (home) {
+                                
                             if (home === 'Yes') {
+                                new UI().displaySingBreak();
                                 const displayPrompt = require('./QuestionPrompt')
                                 displayPrompt()
                             }
@@ -251,7 +310,6 @@ class Employees {
             .catch(console.log)
             .then(([rows, fields]) => {
                 choiceData3 = rows.map(el => (el.id + ' ' + el.title))
-                return choiceData3;
 
             })
             .then(() => con1.end());
@@ -265,84 +323,90 @@ class Employees {
             .catch(console.log)
             .then(([rows, fields]) => {
                 const choiceData = rows.map(el => (el.id + ' ' + el.name))
-
-                inquirer.prompt([
-                    {   // EMPLOYEE FIRST NAME
-                        type: 'input',
-                        message: 'What is the FIRST name of the Employee you wish to add?',
-                        name: 'firstName',
-                        validate: employeeInput => {
-                            if (employeeInput) {
-                                return true;
-                            } else {
-                                console.log('Please enter a FIRST name for the Employee you wish to add!')
-                                return false;
+                if (choiceData3 === undefined) {
+                    console.log(`An unknown error has occurred. \n Please try your request again.`)
+                    new Employees().initiateEmployeeAdd()
+                } else {
+                    inquirer.prompt([
+                        {   // EMPLOYEE FIRST NAME
+                            type: 'input',
+                            message: 'What is the FIRST name of the Employee you wish to add?',
+                            name: 'firstName',
+                            validate: employeeInput => {
+                                if (employeeInput) {
+                                    return true;
+                                } else {
+                                    console.log('Please enter a FIRST name for the Employee you wish to add!')
+                                    return false;
+                                }
                             }
-                        }
-                    },
-                    {   // EMPLOYEE LAST NAME
-                        type: 'input',
-                        message: 'What is the LAST name of the Employee you wish to add?',
-                        name: 'lastName',
-                        when: ({ firstName }) => firstName,
-                        validate: lastNameInput => {
-                            if (lastNameInput) {
-                                return true;
-                            } else {
-                                console.log('Please enter a LAST name for the Employee you wish to add!')
-                                return false;
+                        },
+                        {   // EMPLOYEE LAST NAME
+                            type: 'input',
+                            message: 'What is the LAST name of the Employee you wish to add?',
+                            name: 'lastName',
+                            when: ({ firstName }) => firstName,
+                            validate: lastNameInput => {
+                                if (lastNameInput) {
+                                    return true;
+                                } else {
+                                    console.log('Please enter a LAST name for the Employee you wish to add!')
+                                    return false;
+                                }
                             }
+                        },
+                        {   // RETURNS THE ROLES IN A LIST
+                            type: 'list',
+                            name: 'role',
+                            message: 'Select a Role for the new Employee from the list below.',
+                            choices: choiceData3,
+                            when: ({ lastName }) => lastName,
+                        },
+                        {
+                            type: 'confirm',
+                            name: 'confirmAddManager',
+                            message: 'Would you like to enter a manager for this employee?',
+                            default: false,
+                            when: ({ role }) => role,
+                        },
+                        {   // RETURNS THE NAMES OF THE EMPLOYEES IN A LIST 
+                            type: 'list',
+                            name: 'manager',
+                            message: 'Select an employee from the list below.',
+                            choices: choiceData,
+                            when: ({ confirmAddManager }) => confirmAddManager,
+                        },
+                        {
+                            type: 'list',
+                            name: 'home',
+                            message: 'Would you like to add another employee?',
+                            choices: ['Yes', 'No'],
                         }
-                    },
-                    {   // RETURNS THE ROLES IN A LIST
-                        type: 'list',
-                        name: 'role',
-                        message: 'Select a Role for the new Employee from the list below.',
-                        choices: choiceData3,
-                        when: ({ lastName }) => lastName,
-                    },
-                    {
-                        type: 'confirm',
-                        name: 'confirmAddManager',
-                        message: 'Would you like to enter a manager for this employee?',
-                        default: false,
-                        when: ({ role }) => role,
-                    },
-                    {   // RETURNS THE NAMES OF THE EMPLOYEES IN A LIST 
-                        type: 'list',
-                        name: 'manager',
-                        message: 'Select an employee from the list below.',
-                        choices: choiceData,
-                        when: ({ confirmAddManager }) => confirmAddManager,
-                    },
-                    {
-                        type: 'list',
-                        name: 'home',
-                        message: 'Would you like to add another employee?',
-                        choices: ['Yes', 'No'],
-                    }
-                ]).then(({ firstName, lastName, role, manager, confirmAddManager, home }) => {
-                    if (confirmAddManager === false) {
-                        managerID = 'NULL'
-                    } else {
-                        managerID = manager.split(' ', 1)
-                    }
-                    roleID = role.split(' ', 1)
+                    ]).then(({ firstName, lastName, role, manager, confirmAddManager, home }) => {
+                        if (confirmAddManager === false) {
+                            managerID = 'NULL'
+                        } else {
+                            managerID = manager.split(' ', 1)
+                        }
+                        roleID = role.split(' ', 1)
 
-                    if (home === 'Yes') {
-                        new Employees().addEmployee(firstName, lastName, roleID, managerID)
-                        new UI().displaySingBreak();
-                        console.log(`Success! \n${firstName} ${lastName} has been added to the database!`)
-                        new Employees().initiateEmployeeAdd()
-                    } else {
-                        new Employees().addEmployee(firstName, lastName, roleID, managerID)
-                        new UI().displaySingBreak();
-                        console.log(`Success! \n${firstName} ${lastName} has been added to the database!`)
-                        new Employees().initiateEmployeeAdd()
-                        const displayPrompt = require('./QuestionPrompt')
-                        displayPrompt();
-                    }
-                })
+                        if (home === 'Yes') {
+                            new Employees().addEmployee(firstName, lastName, roleID, managerID)
+                            new UI().displaySingBreak();
+                            console.log(`Success! \n${firstName} ${lastName} has been added to the database!`)
+                            new Employees().initiateEmployeeAdd()
+                        } else {
+                            new Employees().addEmployee(firstName, lastName, roleID, managerID)
+                            new UI().displaySingBreak();
+                            console.log(`Success! \n${firstName} ${lastName} has been added to the database!`)
+                            new Employees().initiateEmployeeAdd()
+                            const displayPrompt = require('./QuestionPrompt')
+                            displayPrompt();
+                        }
+                    })
+                }
+
+
             })
             .then(() => con8.end());
     }
