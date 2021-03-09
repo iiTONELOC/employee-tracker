@@ -2,7 +2,7 @@
 const mysql = require('mysql2');
 const password = require('../password');
 const cTable = require('console.table');
-const UI = require('../ulits/UI');
+const UI = require('../utils/UI');
 const inquirer = require('inquirer');
 
 

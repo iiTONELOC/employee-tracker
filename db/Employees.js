@@ -6,6 +6,7 @@ const UI = require('../ulits/UI');
 const inquirer = require('inquirer');
 
 
+
 class Employees {
     constructor() {
         this.data = [];
@@ -259,8 +260,7 @@ class Employees {
     }
 
     initiateEmployeeAdd() {
-        new UI().displaySingBreak();
-        console.log("You selected to Add an Employee to the database!");
+        console.log("%c\nYou selected to Add an Employee to the database!", "color: green");
 
         let managerID;
         let roleID;

@@ -2,7 +2,7 @@ const inquirer = require('inquirer');
 const Departments = require('./Departments');
 const Role = require('./Roles');
 const Employees = require('./Employees');
-const UI = require('../ulits/UI');
+const UI = require('../utils/UI');
 
 function displayPrompt() {
     inquirer

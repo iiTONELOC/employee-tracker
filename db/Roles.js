@@ -2,7 +2,7 @@
 const mysql = require('mysql2');
 const password = require('../password');
 const cTable = require('console.table');
-const UI = require('../ulits/UI');
+const UI = require('../utils/UI');
 const inquirer = require('inquirer');
 
 class Role {
@@ -61,7 +61,7 @@ class Role {
                     {
                         type: 'list',
                         name: 'home',
-                        message: 'Return to Main Menu?',
+                        message: 'Would you like to add another role to the database?',
                         choices: ['Yes', 'No'],
                         when: ({ roleSalary }) => roleSalary,
 
