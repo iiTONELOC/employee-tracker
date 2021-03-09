@@ -22,7 +22,7 @@ function displayPrompt() {
                     'View Options for Employees',
                     '___________________',
                     'Quit',
-                
+
                 ]
             },
             // Question for adding a department
@@ -49,6 +49,13 @@ function displayPrompt() {
                         return false;
                     }
                 }
+            },
+            {   // CONFIRM DELETE
+                type: 'list',
+                name: 'deleteDepartment',
+                message: 'Are you sure? This action can not be undone!',
+                choices: ['Yes', 'No'],
+                when: (data) => data.action2 === 'Delete Department',
             },
             // UPDATING EMPLOYEE RECORDS
             {
@@ -84,13 +91,13 @@ function displayPrompt() {
             },
             {   // CONFIRM DELETE
                 type: 'list',
-                name: 'deleteRoll',
+                name: 'deleteRole',
                 message: '\nAre you sure? This action can NOT be undone!',
                 choices: ['Yes', 'No'],
                 when: (data) => data.action4 === 'Delete a role from database',
             },
 
-        ]).then(({ action, action2, action3, action4, addDepartment, deleteEmployee, deleteRoll }) => {
+        ]).then(({ action, action2, action3, action4, addDepartment, deleteEmployee, deleteRole, deleteDepartment }) => {
             if (action === '___________________') {
                 displayPrompt();
             }
@@ -108,7 +115,12 @@ function displayPrompt() {
             }
             if (action2 === 'Add a Department') {
                 new Departments().addDepartment(addDepartment);
-
+            }
+            if (deleteDepartment === 'Yes') {
+                new Departments().deleteDepartmentInit();
+            }
+            if(deleteDepartment === 'No'){
+                displayPrompt();
             }
             if (action3 === "Add an Employee") {
                 new Employees().initiateEmployeeAdd()
@@ -130,10 +142,10 @@ function displayPrompt() {
                 console.log("You selected to Add a Role!");
                 new Role().initiateRoleUpdate();
             }
-            if (deleteRoll === 'Yes') {
-                new Role().deleteRoll();
+            if (deleteRole === 'Yes') {
+                new Role().deleteRoleInit();
             }
-            if (deleteRoll === 'No') {
+            if (deleteRole === 'No') {
                 displayPrompt()
             }
             if (action === "Quit") {

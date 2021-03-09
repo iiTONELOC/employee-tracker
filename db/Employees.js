@@ -64,11 +64,7 @@ class Employees {
     }
 
     initiateUpdateEmployeeManager() {
-        let employeeID;
-        let managerID;
-
-
-
+        
         // RETURNS THE NAME OF THE EMPLOYEES 
         const con = mysql.createConnection(
             { host: 'localhost', user: 'root', password: password, database: 'employees' }
@@ -103,37 +99,7 @@ class Employees {
                         message: '\nWould you like to update another employee?',
                         choices: ['Yes', 'No'],
                     }
-                ]).then(({ selectEmployee, manager, home }) => {
-                    if (manager === selectEmployee) {
-                        console.log('The employee and manager cannot be the same. \nIf this employee has no manager select NULL');
-                        new Employees().initiateUpdateEmployeeManager()
-                    } else {
-                        if (manager) {
-                            if (manager === 'NULL') {
-                                managerID = 'NULL'
-                                employeeID = selectEmployee.split(' ', 1)
-                                new Employees().updateEmployeeManager(managerID, employeeID)
-                            } else {
-                                employeeID = selectEmployee.split(' ', 1)
-                                managerID = manager.split(' ', 1)
-                                new Employees().updateEmployeeManager(managerID, employeeID)
-                            }
-                        }
-                        if (home === 'Yes') {
-                            new UI().displaySingBreak();
-                            console.log(`Success! \n${selectEmployee}'s manager has been updated to: ${manager}`)
-                            new Employees().initiateUpdateEmployeeManager()
-                        } else {
-                            new UI().displaySingBreak();
-                            console.log(`Success! \n${selectEmployee}'s manager has been updated to: ${manager}`)
-                            const displayPrompt = require('./QuestionPrompt')
-                            displayPrompt();
-                        }
-                    }
-
-
-
-                })
+                ])
             })
             .then(() => con.end());
 
