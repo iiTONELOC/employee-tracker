@@ -3,7 +3,7 @@ const fs = require('fs');
 const instructions = require('./lib/instructionsData');
 const path = require('path');
 const mysql = require('mysql2');
-const password = process.env.PASSWORD;
+const password = require('./password')
 
 
 class App {
@@ -13,12 +13,11 @@ class App {
 
     firstRun() {
         try {
-            if (fs.existsSync('./lib/instructions.txt')) {
-                console.log("The file exists.");
+            if (fs.existsSync('./instructions.txt')) {
                 new App().initializeApp();
 
             } else {
-                fs.writeFileSync(path.join(__dirname, './lib/instructions.txt'), instructions);
+                fs.writeFileSync(path.join(__dirname, './instructions.txt'), instructions);
                 console.log(instructions);
                 new App().initializeApp();
             }
@@ -26,14 +25,47 @@ class App {
             console.error(err);
         }
     }
-    initializeApp() {
-        console.log(`WELCOME TO EMPLOYEE TRACKER\n`)
-        questionPrompt()
 
+    initializeApp() {
+        console.log(`
+        +--------------------------------------------------------------+
+        |                 WELCOME TO EMPLOYEE TRACKER                  |
+        +--------------------------------------------------------------+\n`)
+        questionPrompt()
     }
 
     initializeDatabase() {
-        console.clear()  
+    
+        const { spawn } = require('child_process');
+        const child = spawn('mysql -u root -p', {shell: true, detached: true});
+
+        child.stdout.on('data', (data) => {
+            console.log(`child stdout:\n${data}`);
+        });
+
+        child.stderr.on('data', (data) => {
+            console.error(`child stderr:\n${data}`);
+        });
+        child.on('exit', function (code, signal) {
+            // console.log('child process exited with ' +
+            //     `code ${code} and signal ${signal}`);
+        });
+
+        const child1 = spawn(`code instructions.txt`, {shell: true, detached: true});
+
+        child1.stdout.on('data', (data) => {
+            console.log(`child1 stdout:\n${data}`);
+        });
+
+        child1.stderr.on('data', (data) => {
+            console.error(`child1 stderr:\n${data}`);
+        });
+        child1.on('exit', function (code, signal) {
+            // console.log('child1 process exited with ' +
+            //     `code ${code} and signal ${signal}`);
+        });
+        questionPrompt();
+        
     }
 
     viewInstructions() {
