@@ -1,6 +1,6 @@
 // get the client
 const mysql = require('mysql2');
-const password = require('../password');
+const password = process.env.PASSWORD;
 const cTable = require('console.table');
 const inquirer = require('inquirer');
 
@@ -67,7 +67,7 @@ class Employees {
         );
         con.promise().query(`
         UPDATE employee SET manager_id = ${manager} WHERE id = ${employee};`)
-            .catch(console.log).then(console.log(`Employee was successfully updated!`))
+            .catch(console.log).then(console.log(`\nEmployee was successfully updated!`))
             .then(() => con.end());
     }
 

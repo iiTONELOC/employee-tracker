@@ -1,6 +1,6 @@
 // get the client
 const mysql = require('mysql2');
-const password = require('../password');
+const password = process.env.PASSWORD;
 const cTable = require('console.table');
 const inquirer = require('inquirer');
 

@@ -104,3 +104,4 @@ dist
 .tern-port
 password.js
 lib/instructions.txt
+app-env
