@@ -35,9 +35,9 @@ class App {
     }
 
     initializeDatabase() {
-    
+
         const { spawn } = require('child_process');
-        const child = spawn('mysql -u root -p', {shell: true, detached: true});
+        const child = spawn('mysql -u root -p', { shell: true, detached: true });
 
         child.stdout.on('data', (data) => {
             console.log(`child stdout:\n${data}`);
@@ -51,7 +51,7 @@ class App {
             //     `code ${code} and signal ${signal}`);
         });
 
-        const child1 = spawn(`code instructions.txt`, {shell: true, detached: true});
+        const child1 = spawn(`code instructions.txt`, { shell: true, detached: true });
 
         child1.stdout.on('data', (data) => {
             console.log(`child1 stdout:\n${data}`);
@@ -61,11 +61,13 @@ class App {
             console.error(`child1 stderr:\n${data}`);
         });
         child1.on('exit', function (code, signal) {
+            console.log('\n Success! Schema Accepted\n');
+            questionPrompt();
             // console.log('child1 process exited with ' +
             //     `code ${code} and signal ${signal}`);
         });
-        questionPrompt();
-        
+
+
     }
 
     viewInstructions() {
