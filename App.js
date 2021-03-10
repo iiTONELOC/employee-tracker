@@ -18,6 +18,7 @@ class App {
             } else {
                 fs.writeFileSync(path.join(__dirname, './lib/instructions.txt'), instructions);
                 console.log(instructions);
+                new App().initializeApp();
             }
         } catch (err) {
             console.error(err);

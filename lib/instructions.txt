@@ -1,4 +1,4 @@
-const instructions = `
+
 +--------------------------------------------------------------+
 |                 WELCOME TO EMPLOYEE TRACKER                  |
 +--------------------------------------------------------------+
@@ -47,6 +47,3 @@ const instructions = `
 |            employees' => 'Add an employee'                   |
 +--------------------------------------------------------------+
 
-`
-
-module.exports = instructions;
