@@ -116,7 +116,23 @@ class Employees {
                         message: '\nWould you like to update another employee?',
                         choices: ['Yes', 'No'],
                     }
-                ])
+                ]).then(({ selectEmployee, manager, home }) => {
+                    let employeeID = selectEmployee.split(' ', 1)
+                    let managerId = manager.split(' ', 1)
+
+                    if(manager){
+                        new Employees().updateEmployeeManager(managerId,employeeID)
+                    }
+        
+                    if (home === 'Yes') {
+                        console.log(`\nSuccess! \n${selectEmployee}'s manager has been updated!\n`)
+                        new Employees().initiateUpdateEmployeeManager()
+                    } if (home === 'No') {
+                        console.log(`\nSuccess! \n${selectEmployee}'s manager has been updated!\n`)
+                        const displayPrompt = require('../lib/QuestionPrompt')
+                        displayPrompt();
+                    }
+                })
             })
             .then(() => con.end());
 
