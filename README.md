@@ -36,7 +36,7 @@ Clone the repo, the link is above. Navigate to the root of the directory and run
 
 # Usage
 [Employee Tracker](https://github.com/iiTONELOC/employee-tracker)  
-This program is designed for mananging your employees. If this is a first use please make sure you follow the installation instructions. Run the program by ```node index```, sroll down to ```Initialize Database```, confirm twice, and follow the provided instrucions. You must add Departments => Roles => then Employees. A test seeds file has been included if you want to get familiar with the application first. Navigate to ```Launch MySQL CLI```, enter the password for your server, type: ``` USE employees ``` then you can run the following command to load information into the database: ``` SOURCE db/seeds/sql ``` hit enter then type: ``` QUIT ```.
+This program is designed for managing your employees. If this is a first use please make sure you follow the installation instructions. Run the program by ```node index```, scroll down to ```Initialize Database```, confirm twice, and follow the provided instructions. You must add Departments => Roles => then Employees. A test seeds file has been included if you want to get familiar with the application first. Navigate to ```Launch MySQL CLI```, enter the password for your server, type: ``` USE employees ``` then you can run the following command to load information into the database: ``` SOURCE db/seeds/sql ``` hit enter then type: ``` QUIT ```.
 
 # Contribute 
  
