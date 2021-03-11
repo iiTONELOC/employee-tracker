@@ -28,9 +28,9 @@ class App {
 
     initializeApp() {
         console.log(`
-        +--------------------------------------------------------------+
-        |                 WELCOME TO EMPLOYEE TRACKER                  |
-        +--------------------------------------------------------------+\n`)
++--------------------------------------------------------------+
+|                 WELCOME TO EMPLOYEE TRACKER                  |
++--------------------------------------------------------------+\n`)
         questionPrompt()
     }
 
@@ -47,8 +47,7 @@ class App {
             console.error(`child stderr:\n${data}`);
         });
         child.on('exit', function (code, signal) {
-            // console.log('child process exited with ' +
-            //     `code ${code} and signal ${signal}`);
+            
         });
 
         const child1 = spawn(`code instructions.txt`, { shell: true, detached: true });
@@ -63,8 +62,7 @@ class App {
         child1.on('exit', function (code, signal) {
             console.log('\n Success! Schema Accepted\n');
             questionPrompt();
-            // console.log('child1 process exited with ' +
-            //     `code ${code} and signal ${signal}`);
+        
         });
 
 
