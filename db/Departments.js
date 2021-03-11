@@ -33,7 +33,7 @@ class Departments {
                 INSERT INTO departments (department_name)
                 Values
                 ('${data}');`).then(() => {
-            console.log(`\nSuccess!\n${data} was added to Departments`);
+            console.log(`\nSuccess!\n${data} was added to Departments\n`);
             const displayPrompt = require('../lib/QuestionPrompt')
             return displayPrompt();
         })
@@ -47,7 +47,7 @@ class Departments {
         );
         con.promise().query(`
                 DELETE FROM departments WHERE id = ${data}`).then(() => {
-            console.log(`\nSuccess!\n${department} was removed from Departments`);
+            console.log(`\nSuccess!\n${department} was removed from Departments\n`);
             const displayPrompt = require('../lib/QuestionPrompt')
             return displayPrompt();
         })

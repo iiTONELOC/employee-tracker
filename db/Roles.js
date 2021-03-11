@@ -48,12 +48,15 @@ class Role {
                         name: 'roleSalary',
                         when: ({ department }) => department,
                         validate: salaryInput => {
-                            if (salaryInput) {
-                                return true;
+
+
+                            if (isNaN(salaryInput)) {
+                                console.log('The salary can only be a number!')
+                                return false;
 
                             } else {
-                                console.log('Please enter a Salary for the Role you wish to add!')
-                                return false;
+
+                                return true;
                             }
                         }
                     },
@@ -72,15 +75,14 @@ class Role {
                     if (roleSalary) {
                         new Role().addRole(role, roleSalary, deptID)
                     }
-                    if (home) {
-                        if (home === 'Yes') {
-                            console.log(`\nSuccess! The role: ${role} has been added to the database!\n`)
-                            const displayPrompt = require('../lib/QuestionPrompt')
-                            return displayPrompt()
-                        } else {
-                            console.log(`\nSuccess! The role: ${role} has been added to the database!\n`)
-                            return new Role().initiateRoleUpdate();
-                        }
+                    if (home === 'No') {
+                        console.log(`\nSuccess! The role: ${role} has been added to the database!\n`)
+                        const displayPrompt = require('../lib/QuestionPrompt')
+                        return displayPrompt()
+                    }
+                    if (home === 'Yes') {
+                        console.log(`\nSuccess! The role: ${role} has been added to the database!\n`)
+                        return new Role().initiateRoleUpdate();
                     }
                 })
 
@@ -123,7 +125,7 @@ class Role {
         );
         con.promise().query(`
                 DELETE FROM role WHERE id = ${data}`).then(() => {
-            console.log(`Success!\n${role} was removed from the database!`);
+            console.log(`\nSuccess!\n${role} was removed from the database!\n`);
             const displayPrompt = require('../lib/QuestionPrompt')
             displayPrompt();
         })
@@ -132,7 +134,7 @@ class Role {
     }
 
     deleteRoleInit() {
-        console.log(`You selected to delete a role from the database!`)
+        console.log(`\nYou selected to delete a role from the database!\n`)
         // create the connection
         const con = mysql.createConnection(
             { host: 'localhost', user: 'root', password: password, database: 'employees' }

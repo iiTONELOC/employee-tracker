@@ -44,12 +44,24 @@ class App {
         });
 
         child.stderr.on('data', (data) => {
-            console.error(`child stderr:\n${data}`);
+            //console.error(`child stderr:\n${data}`);
         });
         child.on('exit', function (code, signal) {
-            
+            console.log('\n Success! Schema Accepted\n');
         });
+        
 
+
+
+
+    }
+
+    viewInstructions() {
+        console.log(`\n${instructions}`)
+    }
+
+    loadInstructions() {
+        const { spawn } = require('child_process');
         const child1 = spawn(`code instructions.txt`, { shell: true, detached: true });
 
         child1.stdout.on('data', (data) => {
@@ -60,16 +72,10 @@ class App {
             console.error(`child1 stderr:\n${data}`);
         });
         child1.on('exit', function (code, signal) {
-            console.log('\n Success! Schema Accepted\n');
+            
             questionPrompt();
-        
+
         });
-
-
-    }
-
-    viewInstructions() {
-        console.log(`\n${instructions}`)
     }
 
 
