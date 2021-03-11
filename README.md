@@ -20,7 +20,7 @@ Employee Tracker is a simple CLI for managing your MySQL Employee's database.
 *[License](#license)
 
 # Demo
-[DEMO: Employee Tracker]( )
+[DEMO: Employee Tracker]( https://drive.google.com/file/d/1_rLpuJNYqfKFYjpfh1-PHcIBcDm9GDr8/view)
 
 # Technology 
 | Technology | Description                        |Links ↘️ |
