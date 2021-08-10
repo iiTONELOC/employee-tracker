@@ -9,15 +9,15 @@
 Employee Tracker is a simple CLI for managing your MySQL Employee's database.
 
 # Table of Contents
-*[Demo](#demo)  
-*[Technology](#technology)  
-*[Features](#features)  
-*[Installation](#installation)  
-*[Usage](#usage)  
-*[Contribute](#contribute)  
-*[Tests](#tests)  
-*[Questions](#questions)  
-*[License](#license)
+- [Demo](#demo)  
+- [Technology](#technology)  
+- [Features](#features)  
+- [Installation](#installation)  
+- [Usage](#usage)  
+- [Contribute](#contribute)  
+- [Tests](#tests)  
+- [Questions](#questions)  
+- [License](#license)
 
 # Demo
 [DEMO: Employee Tracker]( https://drive.google.com/file/d/1_rLpuJNYqfKFYjpfh1-PHcIBcDm9GDr8/view)
@@ -48,7 +48,7 @@ If you wish to test the app follow the instructions for seeding under USAGE.
 Feel free to reach out if you have any questions
 
 Contact via GitHub: [iiTONELOC](https://github.com/iiTONELOC)  
-Send an email: [](mailto:)
+
 
 # License
 MIT License
